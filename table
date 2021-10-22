@@ -1,0 +1,71 @@
+#!/usr/bin/python3
+
+from sys import argv
+
+matrix = []
+
+line = input()
+
+longestWord = []
+
+while (line != ""):
+    row = line.split("\t")
+    matrix.append(row)
+    for i in range(len(row)):
+        if len(longestWord) <= i:
+            longestWord.append(len(row[i]))
+        else:
+            longestWord[i] = max(longestWord[i], len(row[i]))
+    line = input()
+
+asciihline = "+"
+for n in longestWord:
+    for i in range(n + 2):
+        asciihline += "-"
+    asciihline += "+"
+asciihline += "\n"
+
+def hline(latex=True):
+    if latex:
+        return "  \\hline\n"
+    else:
+        return asciihline
+
+def printMatrix(latex=False):
+    out = ""
+    if latex:
+        out = "\\begin{tabular}{|"
+        for n in longestWord:
+            out += "c|"
+        out += "}\n"
+    out += hline(latex)
+    for row in matrix:
+        if not latex:
+            out += "| "
+        else:
+            out += "  "
+        for i in range(len(row)):
+            cell = row[i]
+            if latex:
+                out += cell
+            else:
+                out += cell.ljust(longestWord[i])
+            if latex:
+                if i < len(row) - 1:
+                    out += " & "
+            else:
+                out += " | "
+        if latex:
+            out += "\\\\"
+        out += "\n"
+        out += hline(latex)
+    if latex:
+        out += "\\end{tabular}"
+    return out
+
+# when invoking from the command line, print ascii version
+# this is so that it can be used for vim scripting in latex
+if len(argv) == 1:
+    print(printMatrix(False))
+
+print(printMatrix(True))
